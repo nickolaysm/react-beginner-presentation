@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		body {
+			overflow:  hidden;
+		}
+		.snowflake {
+			color: #4480B4;
+			font-size: 25px;
+			position: absolute;
+			top: 0;
+		}
+	</style>
+	<!--script  type="text/jsx" src=".\react-snow.js"></script-->		
+	<script src=".\react-0.13.1\build\react-with-addons.js"></script>
+	<script src=".\react-0.13.1\build\JSXTransformer.js"></script>	
+</head>
+<body>
+
+	<div id="counter"/>
+	<div id="snows"/>
+
+	<script type="text/jsx">
+
+		var basicAnimation = (function() {
+
+		   function step() {
+		      var col = document.querySelectorAll('.snowflake:not(.steady)');
+		      for (var i = 0, l = col.length; i < l; i++) {
+		         var item = col[i];
+		         item.style.top = item.getBoundingClientRect().top + item.stepY + 'px';
+		         item.style.left = item.getBoundingClientRect().left + Math.sin(item.x += item.stepX) + 'px'
+		      }
+		   }
+
+		   function check() {
+		      var col = document.querySelectorAll('.snowflake:not(.steady)');
+		      for (var i = 0, l = col.length; i < l; i++) {
+		         var item = col[i];
+		         var rect = item.getBoundingClientRect();
+		         if (rect.bottom > window.innerHeight) {
+		            item.classList.add('steady');
+		            addToScene(generateSnowflake());
+		            setTimeout(remove.bind(null, item), 1000);
+		         }
+		      }
+		   }
+
+		   function remove(item) {
+		      item.parentNode.removeChild(item);
+		   }
+
+		   return function basicAnimationInner() {
+		      step();
+		      check();
+		      setTimeout(basicAnimation, 0);
+		   };
+
+		})();
+
+		var fastAnimation = (function(){
+
+		   function remove(snowflake) {
+		      snowflake.classList.add('drop');
+		   }
+
+
+		   return function fastAnimation() {
+		      var col = document.querySelectorAll('.snowflake');
+		      var calculatedData = [].slice.call(col).map(function(item){
+		         var rect = item.getBoundingClientRect();
+		         return {
+		            div: item,
+		            steady: item.classList.contains('steady'),
+		            rect: {
+		               left: rect.left,
+		               top: rect.top,
+		               bottom: rect.bottom
+		            }
+		         }
+		      }).map(function(item){
+		         item.rect.top = item.rect.top + item.div.stepY;
+		         item.rect.left = item.rect.left + Math.sin(item.div.x += item.div.stepX);
+		         if (item.rect.bottom > window.innerHeight) {
+		            item.mustStop = true;
+		         }
+		         return item;
+		      });
+		      calculatedData.forEach(function(item){
+		         if (item.mustStop) {
+		            if (!item.steady) {
+		               item.div.classList.add('steady');
+		               addToScene(generateSnowflake(), true);
+		               setTimeout(remove.bind(null, item.div), 1000);
+		            }
+		         } else {
+		            item.div.style.top = item.rect.top + 'px';
+		            item.div.style.left = item.rect.left + 'px';
+		         }
+		      });
+		      calculatedData.filter(function(item){
+		         return item.div.classList.contains('drop');
+		      }).forEach(function(item){
+		         item.div.parentNode.removeChild(item.div);
+		      });
+		      setTimeout(fastAnimation, 0);
+		   }
+
+		})();		
+
+
+		function generateSnowflake() {
+		   var div = document.createElement('div');
+		   div.className = 'snowflake';
+		   div.appendChild(document.createTextNode('*'));
+		   div.stepY = 2 + Math.random() * 3;
+		   div.stepX = 0.1 + Math.random() * 0.1;
+		   div.x = 0;
+		   return div;
+		}
+
+		function addToScene(snowflake, fromTop) {
+		   document.body.appendChild(snowflake);
+		   snowflake.style.left = Math.random() * window.innerWidth + 'px';
+		   snowflake.style.top = fromTop ? 0 : Math.random() * window.innerHeight + 'px';
+		}
+
+		function letItSnow(n, animate) {
+		   while(n-- >= 0) {
+		      addToScene(generateSnowflake());
+		   }
+		   document.getElementById('counter').appendChild(
+		      document.createTextNode(
+		         document.getElementsByClassName('snowflake').length));
+		   animate();
+		}	
+
+		var SnowField = React.createClass({
+			componentDidUpdate : function(){
+				//console.log("componentDidUpdate");
+				//var react = this;
+				//setTimeout(function(){console.log("SnowField componentDidUpdate setTimeout"); react.forceUpdate()}, 10000);
+			},
+
+			componentDidMount : function(){
+				//console.log("componentDidMount");
+				var react = this;
+				//setTimeout(function(){console.log("SnowField componentDidMount setTimeout");react.forceUpdate()}, 10000);
+			},
+
+			render: function() {
+				var snowflakes = [];
+				for(var i=0; i <= this.props.count; i++){
+					snowflakes.push(<Snowflake key={i}/>)
+				}
+				//console.log("snowflakes", this.props, snowflakes);
+			    return (
+			    	<div style={{width:"100%", height:"100%"}}>
+			    		{snowflakes}
+			    	</div>
+			    	);
+			}
+		})
+
+
+		var Snowflake = React.createClass({
+			HALH_SIZE : 50,
+			FREEZ_ITERATION : 30,
+
+			componentWillMount : function(){
+				//console.log("------------------- Snowflake componentWillMount");
+				var initLeft = Math.random() * window.innerWidth;
+				this.setState({
+					top   : 0,
+					initLeft:  initLeft,
+					left  : initLeft,
+					stepY : 2 + Math.random() * 3,
+				    stepX : 0.1 + Math.random() * 0.1,
+				    iteration : 0,
+				    freez : false
+				});
+			},
+
+			componentWillUpdate : function(){
+				
+			},
+
+			componentWillReceiveProps: function() {
+				var iteration = 0;
+				if(this.state.top >= (window.innerHeight - this.HALH_SIZE)){
+					if(this.state.iteration == this.FREEZ_ITERATION){
+						//console.log("this.state.iteration", this.state.iteration);
+						this.componentWillMount();
+						return;
+					}
+					iteration = this.state.iteration ? this.state.iteration + 1 : 1;
+				}
+				this.setState({
+					top: this.state.top + this.state.stepY, 
+					left: this.state.left + Math.sin(this.state.initLeft += this.state.stepX),
+					iteration: iteration
+				});
+			},
+
+			shouldComponentUpdate: function(){
+				//console.log("shouldComponentUpdate", this.state.iteration, this.state);
+
+				if(this.state.top >= (window.innerHeight - this.HALH_SIZE)){
+					return false;
+				} 
+
+				return true;
+			},
+
+			render: function() {	
+				//console.log("--------- Snowflake render");	
+			    return (
+			    	<div className="snowflake"  style={{left: this.state.left, top: this.state.top}}>*</div>
+			    	);
+			}
+		})
+
+		var letItSnow2 = function(snowCount){
+			var element = React.createElement(SnowField, {count: snowCount});
+		    var renderComponent = React.render(element, document.getElementById('snows'), 
+		    		function () {
+					    console.log('React Rendered');
+		    		});
+			function snow(){
+			 setTimeout(function(){renderComponent.forceUpdate(), snow()}, 0);
+			};
+			snow();
+		};
+
+		//letItSnow(1000, basicAnimation);
+		//letItSnow(100, fastAnimation);
+		letItSnow2(300);
+	    
+
+	</script>
+</body>
+</html>

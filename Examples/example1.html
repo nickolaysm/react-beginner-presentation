@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title></title>
+	<style type="text/css">
+		div .message {
+			border-color: #0AA;
+			border-width: 1px;
+			border-style: solid;
+		}
+	</style>
+	<script src=".\react-0.13.1\build\react-with-addons.js"></script>
+	<script src=".\react-0.13.1\build\JSXTransformer.js"></script>	
+</head>
+<body>
+
+	<div id="mydiv"/>
+
+	<script type="text/jsx">
+		var DinamicDivComponent = React.createClass({
+		   propTypes: {
+		      width   : React.PropTypes.string,
+		      height  : React.PropTypes.string,
+		      message : React.PropTypes.string, 
+		      onClick : React.PropTypes.func
+		   },
+		   render: function() {
+		      return (
+		          <div className="message" style={{
+		              width  : this.props.width, 
+		              height : this.props.height}}
+		              onClick={this.props.onClick}
+		          >{this.props.message}</div>
+		      )
+		   }
+		});
+
+		var CompositeDivComponent = React.createClass({
+		   getInitialState : function(){
+		      return {message:"Hello"};
+		   },
+		   onClick : function(){
+		      this.setState({message:
+		         this.state.message == "Hello"? "Bye" : "Hello"})
+		   },
+		   render: function() {
+		      return (
+				<div>
+		           <DinamicDivComponent width="50px" height="20px" message={this.state.message} />
+		           <DinamicDivComponent width="100px" height="20px" message="Click me" 
+		              onClick={this.onClick}/>
+		        </div>
+		      )
+		   }
+		});
+
+		var element = React.createElement( DinamicDivComponent , {width: "50px", height:"10px", message:"Hello"});
+		//var element = React.createElement( CompositeDivComponent );
+		var renderComponent = React.render(element, document.getElementById("mydiv"));
+
+	
+	</script>
+</body>
+</html>
