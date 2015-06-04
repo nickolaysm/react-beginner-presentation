@@ -43,16 +43,20 @@
 		});
 
 		var CompositeDivComponent = React.createClass({
-
-		   remove : function(name){
+			// Обработчик на событие по нажатию на «х»		   
+			remove : function(name){
+				//фильтром убираем из своих данных удаленный элемент
 		   		this.props.objects = this.props.objects.filter(function(elem){return name != elem.name;});
-		   		this.setState(this.state);//Вызываем обновление
+		   		//Вызываем обновление
+		   		this.setState(this.state);
 		   },
 
 		   render: function() {		   	
 		   	var react = this;
 		   	var elems = this.props.objects.map(function(elem){
-		   		//key = {elem.name}
+		   		//key = {elem.name} – если поставить это как параметр, то все будет работать корректно
+				//если нет, то при удалении – удаляется всегда последний элемент
+				//Потому что мы не знаем какой элемент удалять!!!
 		   		return <DinamicDivComponent width="100px" height="20px" onDelete={react.remove.bind(react, elem.name)}/>
 		   	});
 		    return (<div>{elems}</div>)
