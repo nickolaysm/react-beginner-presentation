@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title></title>
+	<style type="text/css">
+		div .message {
+			border-color: #0AA;
+			border-width: 1px;
+			border-style: solid;
+		}
+	</style>
+	<script src=".\react-0.13.1\build\react-with-addons.js"></script>
+	<script src=".\react-0.13.1\build\JSXTransformer.js"></script>	
+</head>
+<body>
+
+	<div id="mydiv"/>
+
+	<script type="text/jsx">
+		var DinamicDivComponent = React.createClass({
+		   getInitialState : function(){
+		      return {message: Math.round(Math.random() * 10)};
+		   },
+		   propTypes: {
+		      width   : React.PropTypes.string,
+		      height  : React.PropTypes.string,
+		      message : React.PropTypes.string, 
+		      onDelete : React.PropTypes.func
+		   },
+		   render: function() {
+		      return (
+		          <div className="message" style={{
+		              width  : this.props.width, 
+		              height : this.props.height}}
+		          >
+
+		            {this.state.message}
+		          	<span onClick={this.props.onDelete} style={{width:"30px", height:"15px", backgroundColor:"red"}}>x</span>
+		          </div>
+		      )
+		   }
+		});
+
+		var CompositeDivComponent = React.createClass({
+
+		   remove : function(name){
+		   		this.props.objects = this.props.objects.filter(function(elem){return name != elem.name;});
+		   		this.setState(this.state);//Вызываем обновление
+		   },
+
+		   render: function() {		   	
+		   	var react = this;
+		   	var elems = this.props.objects.map(function(elem){
+		   		//key = {elem.name}
+		   		return <DinamicDivComponent width="100px" height="20px" onDelete={react.remove.bind(react, elem.name)}/>
+		   	});
+		    return (<div>{elems}</div>)
+		   }
+		});
+
+		var element = React.createElement( CompositeDivComponent , {objects:[{name:"one"}, {name:"two"}, {name:"three"}]});
+		//var element = React.createElement( CompositeDivComponent );
+		var renderComponent = React.render(element, document.getElementById("mydiv"));
+
+	
+	</script>
+</body>
+</html> 
