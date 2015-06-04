@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-	<title>Shower Presentation Engine</title>
+	<title>Презенташка по основам ReactJS</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=792, user-scalable=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -14,12 +14,12 @@
 <body class="list" onload="prettyPrint()">
 	<script type="text/javascript">
 		//SyntaxHighlighter.config.clipboardSwf = 'scripts/clipboard.swf';
-		SyntaxHighlighter.all();
+		//SyntaxHighlighter.all();
 	</script>
 
 	<header class="caption">
-		<h1>Shower Presentation Engine</h1>
-		<p>Yours Truly, Famous Inc.</p>
+		<h1>Презенташка по основам ReactJS</h1>
+		<p>Николай</p>
 	</header>
 	<section class="slide cover" id="Cover"><div>
 		<h2><img id="logo" src="pictures/krista.png" alt=""> ReactJS это просто</h2>		
@@ -54,6 +54,7 @@
 			}
 		</style>
 	</div></section>
+	
 	<section class="slide"><div>
 		<h2>План доклада</h2>
 		<ul>
@@ -64,6 +65,7 @@
 			<li>Производительность</li>
 		</ul>
 	</div></section>
+
 	<section class="slide"><div>
 		<h2>Введение</h2>
 		<p>Для чего он нужен???</p>
@@ -91,7 +93,7 @@
 		<p>Все в ReactJS оформляется как компонент.</p>
 	</div></section>
 
-	<section class="slide" id="code"><div>
+	<section class="slide code"><div>
 		<h2>ReactJS. Компонент</h2>
 		Компонент – обернутый js объект.
 		<pre  class="prettyprint lang-js">
@@ -102,47 +104,42 @@ var FixedDivComponent = React.createClass({
 });
 		</pre>	
 		<style>
-			#code pre {
-				white-space: pre
+			.code pre {
+				white-space: pre;
+				border-width: 0;
+				margin-bottom: 0;
 			}
 		</style>
 	</div></section>
 
-	<section class="slide" id="code"><div>
+	<section class="slide code"><div>
 		<h2>ReactJS. Компонет. Передача данных</h2>
 		<pre  class="prettyprint lang-js">
 var DinamicDivComponent = React.createClass({
-   propTypes: {
-      width   : React.PropTypes.string,
-      height  : React.PropTypes.string,
-      message : React.PropTypes.string,      
-   },
-   render: function() {
-      return (
-          <div style={{
-              width  : this.props.width, 
-              height : this.props.height}}
-          >this.props.message</div>
-      )
-   }
+    propTypes:{/*Объявляем параметры*/}
+    render: function() {
+        return( &lt;div style={{ width  : <span class="nocode"><mark class="important">this.props.width</mark></span>, height : <span class="nocode"><mark class="important">this.props.height</mark></span>}}&gt;
+                    <span class="nocode"><mark class="important">this.props.message</mark></span>
+                &lt;/div&gt; )
+    }
 });
 		</pre>	
 	</div></section>
 
-	<section class="slide"><div>
-		<h2>All Kind of Lists</h2>
-		<ol>
-			<li>Simple lists are marked with bullets</li>
-			<li>Ordered lists begin with a number</li>
-			<li>You can even nest lists one inside another
-				<ul>
-					<li>Or mix their types</li>
-					<li>But do not go too far</li>
-					<li>Otherwise audience will be bored</li>
-				</ul>
-			</li>
-			<li>Look, seven rows exactly!</li>
-		</ol>
+	<section class="slide code"><div>
+		<h2>ReactJS. Объявление параметров</h2>
+		<pre  class="prettyprint lang-js">
+propTypes: {
+    width   : React.PropTypes.string,
+    height  : React.PropTypes.string,
+    message : React.PropTypes.string,
+}</pre>	
+		<figure>
+			<blockquote>
+				Не обязательно описывать входные параметры, но это хороший тон.
+				Кроме того, в режиме отладки React предупредит вас о несоответствии типов. В боевом режиме проверка отключается.
+			</blockquote>
+		</figure>
 	</div></section>
 	<section class="slide"><div>
 		<h2>Serious Citations</h2>
